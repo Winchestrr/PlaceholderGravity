@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public Animator cameraAnimator;
+
     public float playerSpeed;
     public float mouseSensitivity = 2f;
     public float jumpHeight = 3f;
@@ -35,6 +37,8 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E))
         {
+            RotateCamera();
+
             if(currentGravity == "down")
             {
                 Physics.gravity = new Vector3(0, 4.0F, 0);
@@ -45,6 +49,18 @@ public class Player : MonoBehaviour
                 Physics.gravity = new Vector3(0, -4.0F, 0);
                 currentGravity = "down";
             }
+        }
+    }
+
+    void RotateCamera()
+    {
+        if(currentGravity == "down")
+        {
+            cameraAnimator.SetTrigger("Rotate1");
+        }
+        else
+        {
+            cameraAnimator.SetTrigger("Rotate2");
         }
     }
 }
