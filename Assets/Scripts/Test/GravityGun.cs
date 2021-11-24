@@ -44,6 +44,8 @@ public class GravityGun : MonoBehaviour
             collision = hitinfo.point;
             lastHit = hitinfo.transform.gameObject;
             cf = lastHit.transform.gameObject.GetComponent<ConstantForce>();
+
+            invertedGravity = earthGravity * (-2) * hitinfo.transform.gameObject.GetComponent<Rigidbody>().mass;
         }
         
     }
@@ -55,7 +57,9 @@ public class GravityGun : MonoBehaviour
 
     void ChangeGravity()
     {
-        if(cf != null)
+        //invertedGravity = earthGravity * (-2) * ;
+
+        if (cf != null)
         {
             if (!isInverted)
             {
