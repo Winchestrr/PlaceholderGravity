@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     public CharacterController controller;
     public Transform cam;
 
+    float horizontal;
+    float vertical;
     public float speed;
 
     public float turnSmoothTime = 0.1f;
@@ -14,8 +16,19 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
+        GetInputs();
+        Move(); 
+    }
+
+
+    void GetInputs()
+    {
+        horizontal = Input.GetAxisRaw("Horizontal");
+        vertical = Input.GetAxisRaw("Vertical");
+    }
+
+    void Move()
+    {
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
 
         if (direction.magnitude > 0.1f)
