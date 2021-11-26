@@ -30,10 +30,10 @@ public class GravityGun : MonoBehaviour
         CastRay();
         //GetPointerObjectForce();
 
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            ChangeGravity();
-        }
+        //if (Input.GetKeyDown(KeyCode.Q))
+        //{
+        //    ChangeGravity();
+        //}
     }
 
     void CastRay()

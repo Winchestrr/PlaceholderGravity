@@ -9,13 +9,17 @@ public class PlayerController2 : MonoBehaviour
     public CharacterController controller;
     public Transform cam;
     private PlayerInput playerInput;
+
+    public Vector3 playerVelocity;
+    public float jumpHeight;
+    public float gravityValue = -9.81f;
+    public float playerSpeed;
+
+    private Vector2 input;
     private InputAction moveAction;
+    private InputAction jumpAction;
 
-    //https://www.youtube.com/watch?v=SeBEvM2zMpY 11:04
-
-    float horizontal;
-    float vertical;
-    public float speed;
+    //https://www.youtube.com/watch?v=SeBEvM2zMpY
 
     public float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
@@ -24,7 +28,9 @@ public class PlayerController2 : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
-        playerInput.actions["Move"].ReadValue<Vector2>();
+
+        moveAction = playerInput.actions["Move"];
+        jumpAction = playerInput.actions["Jump"];
     }
 
     void Update()
@@ -36,22 +42,22 @@ public class PlayerController2 : MonoBehaviour
 
     void GetInputs()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
-        vertical = Input.GetAxisRaw("Vertical");
+        input = moveAction.ReadValue<Vector2>();
     }
 
     void Move()
     {
-        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
+        if(playerVelocity.y < 0) playerVelocity.y = 0;
 
-        if (direction.magnitude > 0.1f)
+        Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
+        controller.Move(direction * Time.deltaTime * playerSpeed);
+
+        if(jumpAction.triggered)
         {
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
-
-            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-            controller.Move(moveDir.normalized * speed * Time.deltaTime);
+            Debug.Log("jump");
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
         }
+        playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
     }
 }
