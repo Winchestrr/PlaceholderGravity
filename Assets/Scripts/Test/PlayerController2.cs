@@ -9,6 +9,7 @@ public class PlayerController2 : MonoBehaviour
     public CharacterController controller;
     public Transform cam;
     private PlayerInput playerInput;
+    public Transform cameraTransform;
 
     public Vector3 playerVelocity;
     public float jumpHeight;
@@ -28,6 +29,7 @@ public class PlayerController2 : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
+        cameraTransform = Camera.main.transform;
 
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
@@ -50,6 +52,10 @@ public class PlayerController2 : MonoBehaviour
         if(playerVelocity.y < 0) playerVelocity.y = 0;
 
         Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
+
+        direction = direction.x * cameraTransform.right.normalized + direction.z * cameraTransform.forward.normalized;
+        direction.y = 0f;
+
         controller.Move(direction * Time.deltaTime * playerSpeed);
 
         if(jumpAction.triggered)
