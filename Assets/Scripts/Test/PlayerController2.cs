@@ -23,17 +23,12 @@ public class PlayerController2 : MonoBehaviour
     private InputAction jumpAction;
     private InputAction shootAction;
 
-    //https://www.youtube.com/watch?v=SeBEvM2zMpY
+    //https://www.youtube.com/watch?v=SeBEvM2zMpY 39:10
 
     public float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
 
-    private void OnEnable()
-    {
-        Cursor.visible = false;
-    }
-
-    private void Start()
+    private void Awake()
     {
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
@@ -43,6 +38,13 @@ public class PlayerController2 : MonoBehaviour
         jumpAction = playerInput.actions["Jump"];
         shootAction = playerInput.actions["Shoot"];
     }
+
+    private void OnEnable()
+    {
+        Cursor.visible = false;
+    }
+
+    
 
     void Update()
     {
