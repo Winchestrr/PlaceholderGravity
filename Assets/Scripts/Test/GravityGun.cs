@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GravityGun : MonoBehaviour
 {
+    public PlayerInput playerInput;
+
     [Header("Raycast")]
+    public GameObject gunEnd;
+
     public float distance;
     public GameObject lastHit;
 
@@ -29,25 +34,22 @@ public class GravityGun : MonoBehaviour
     {
         CastRay();
         //GetPointerObjectForce();
-
-        //if (Input.GetKeyDown(KeyCode.Q))
-        //{
-        //    ChangeGravity();
-        //}
     }
 
     void CastRay()
     {
-        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * distance, Color.red);
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitinfo, distance))
+        Debug.DrawRay(gunEnd.transform.position, transform.TransformDirection(Vector3.forward) * distance, Color.red);
+        if (Physics.Raycast(gunEnd.transform.position, transform.TransformDirection(Vector3.forward), out hitinfo, distance))
         {
             collision = hitinfo.point;
             lastHit = hitinfo.transform.gameObject;
             cf = lastHit.transform.gameObject.GetComponent<ConstantForce>();
 
-            invertedGravity = earthGravity * (-2) * hitinfo.transform.gameObject.GetComponent<Rigidbody>().mass;
+            if(hitinfo.transform.gameObject.GetComponent<Rigidbody>() != null)
+            {
+                invertedGravity = earthGravity * (-2) * hitinfo.transform.gameObject.GetComponent<Rigidbody>().mass;
+            }
         }
-        
     }
 
     void GetPointerObjectForce()
@@ -55,7 +57,7 @@ public class GravityGun : MonoBehaviour
         cf = lastHit.transform.gameObject.GetComponent<ConstantForce>();
     }
 
-    void ChangeGravity()
+    public void ChangeGravity()
     {
         //invertedGravity = earthGravity * (-2) * ;
 
