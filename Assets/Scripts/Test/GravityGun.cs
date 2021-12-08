@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class GravityGun : MonoBehaviour
 {
     public PlayerInput playerInput;
+    public PlayerController2 playerController;
 
     [Header("Raycast")]
     public GameObject gunEnd;
@@ -23,6 +24,12 @@ public class GravityGun : MonoBehaviour
 
     ConstantForce cf;
 
+    [Header("Pick up")]
+    public GameObject heldObject;
+    public Transform holdParent;
+    public float moveForce = 250;
+    public bool isHeld = false;
+
     void Start()
     {
         cf = gameObject.GetComponent<ConstantForce>();
@@ -33,13 +40,18 @@ public class GravityGun : MonoBehaviour
     void Update()
     {
         CastRay();
-        //GetPointerObjectForce();
+
+        if(heldObject != null)
+        {
+            MoveObject();
+        }
     }
 
     void CastRay()
     {
-        Debug.DrawRay(gunEnd.transform.position, transform.TransformDirection(Vector3.forward) * distance, Color.red);
-        if (Physics.Raycast(gunEnd.transform.position, transform.TransformDirection(Vector3.forward), out hitinfo, distance))
+        //Debug.DrawRay(gunEnd.transform.position, transform.TransformDirection(Vector3.forward) * distance, Color.red);
+        //if (Physics.Raycast(gunEnd.transform.position, transform.TransformDirection(Vector3.forward), out hitinfo, distance))
+        if (Physics.Raycast(playerController.cameraTransform.position, playerController.cameraTransform.forward, out hitinfo, distance))
         {
             collision = hitinfo.point;
             lastHit = hitinfo.transform.gameObject;
@@ -52,10 +64,10 @@ public class GravityGun : MonoBehaviour
         }
     }
 
-    void GetPointerObjectForce()
-    {
-        cf = lastHit.transform.gameObject.GetComponent<ConstantForce>();
-    }
+    //void GetPointerObjectForce()
+    //{
+    //    cf = lastHit.transform.gameObject.GetComponent<ConstantForce>();
+    //}
 
     public void ChangeGravity()
     {
@@ -74,6 +86,50 @@ public class GravityGun : MonoBehaviour
             isInverted = !isInverted;
         }
         cf = null;
+    }
+
+    public void PickUpOrDrop()
+    {
+        //if(!isHeld && heldObject != null)
+        if(!isHeld)
+        {
+            PickUpObject();
+            isHeld = true;
+        }
+        else
+        {
+            DropObject();
+            isHeld = false;
+        }
+    }
+
+    public void PickUpObject()
+    {
+        Debug.Log(lastHit.ToString());
+        Rigidbody objectRB = lastHit.GetComponent<Rigidbody>();
+        objectRB.useGravity = false;
+        objectRB.drag = 10;
+        objectRB.transform.parent = holdParent;
+        heldObject = lastHit;
+    }
+
+    public void MoveObject()
+    {
+        if(Vector3.Distance(heldObject.transform.position, holdParent.position) > 0.1f)
+        {
+            Vector3 moveDirection = (holdParent.position - heldObject.transform.position);
+            heldObject.GetComponent<Rigidbody>().AddForce(moveDirection * moveForce);
+        }
+    }
+
+    public void DropObject()
+    {
+        Rigidbody objectRB = heldObject.GetComponent<Rigidbody>();
+        objectRB.useGravity = true;
+        objectRB.drag = 1;
+
+        objectRB.transform.parent = null;
+        heldObject = null;
     }
 
     private void OnDrawGizmos()

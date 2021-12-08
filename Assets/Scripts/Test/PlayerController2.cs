@@ -22,6 +22,7 @@ public class PlayerController2 : MonoBehaviour
     private InputAction moveAction;
     private InputAction jumpAction;
     private InputAction shootAction;
+    private InputAction pickDropAction;
 
     //https://www.youtube.com/watch?v=SeBEvM2zMpY 39:10
 
@@ -37,14 +38,21 @@ public class PlayerController2 : MonoBehaviour
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
         shootAction = playerInput.actions["Shoot"];
+        pickDropAction = playerInput.actions["PickUpDrop"];
     }
 
     private void OnEnable()
     {
         Cursor.visible = false;
+        //shootAction.performed += _ => gravityGun.ChangeGravity();
     }
 
-    
+    private void OnDisable()
+    {
+        //shootAction.performed -= _ => gravityGun.ChangeGravity();
+    }
+
+
 
     void Update()
     {
@@ -58,6 +66,7 @@ public class PlayerController2 : MonoBehaviour
         input = moveAction.ReadValue<Vector2>();
         if (jumpAction.triggered) Cursor.visible = true;
         if (shootAction.triggered) gravityGun.ChangeGravity();
+        if (pickDropAction.triggered) gravityGun.PickUpOrDrop();
     }
 
     void Move()
