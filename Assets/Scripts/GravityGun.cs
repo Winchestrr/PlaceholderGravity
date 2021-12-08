@@ -2,11 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class GravityGun : MonoBehaviour
 {
     public PlayerInput playerInput;
     public PlayerController2 playerController;
+
+    [Header("Energy")]
+    public static float maxEnergy = 200;
+    public static float currentEnergy;
 
     [Header("Raycast")]
     public GameObject gunEnd;
@@ -32,6 +37,8 @@ public class GravityGun : MonoBehaviour
 
     void Start()
     {
+        currentEnergy = maxEnergy;
+
         cf = gameObject.GetComponent<ConstantForce>();
 
         Physics.gravity = new Vector3(0, earthGravity, 0);
@@ -45,6 +52,11 @@ public class GravityGun : MonoBehaviour
         {
             MoveObject();
         }
+    }
+
+    void EnergyRefill()
+    {
+
     }
 
     void CastRay()
