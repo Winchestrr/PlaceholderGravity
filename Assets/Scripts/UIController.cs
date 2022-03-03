@@ -2,10 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIController : MonoBehaviour
 {
+    [Header("Energy")]
     public Image energyBar;
+    public TextMeshProUGUI energyText;
+    public bool isFilling;
 
     public static UIController instance;
 
@@ -14,13 +18,29 @@ public class UIController : MonoBehaviour
         if (instance == null) instance = this;
     }
 
-    public static void RefillBar(float refillRate)
+    public static void EnergyBarUse()
     {
-        
+        instance.energyBar.fillAmount = GravityGun.currentEnergy / GravityGun.maxEnergy;
+        instance.energyText.text = GravityGun.currentEnergy.ToString();
     }
 
-    public static void ReduceBar(float reduceRate)
+    public IEnumerator EnergyBarFillIE()
     {
+        isFilling = true;
 
+        for(float i = 0; i < 100; i++)
+        {
+            energyBar.fillAmount += 0.01f;
+            
+            if(energyBar.fillAmount == 1)
+            {
+                isFilling = false;
+                StopCoroutine(EnergyBarFillIE());
+            }
+            else
+            {
+                yield return new WaitForSeconds(GravityGun.energyFillRate / 100);
+            }
+        }
     }
 }

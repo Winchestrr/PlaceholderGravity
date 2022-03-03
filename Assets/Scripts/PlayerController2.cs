@@ -65,8 +65,8 @@ public class PlayerController2 : MonoBehaviour
     {
         input = moveAction.ReadValue<Vector2>();
         if (jumpAction.triggered) Cursor.visible = true;
-        if (shootAction.triggered) gravityGun.ChangeGravity();
-        if (pickDropAction.triggered) gravityGun.PickUpOrDrop();
+        if (shootAction.triggered) gravityGun.Shoot("change");
+        if (pickDropAction.triggered) gravityGun.Shoot("pick");
     }
 
     void Move()
