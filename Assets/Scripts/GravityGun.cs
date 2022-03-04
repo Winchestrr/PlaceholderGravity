@@ -179,11 +179,10 @@ public class GravityGun : MonoBehaviour
     {
         if (!UseEnergy(pickUpCost)) return;
 
-        Debug.Log(lastHit.ToString());
         Rigidbody objectRB = lastHit.GetComponent<Rigidbody>();
         objectRB.useGravity = false;
         objectRB.drag = 10;
-        objectRB.transform.parent = holdParent;
+        //objectRB.transform.parent = holdParent;
         heldObject = lastHit;
     }
 
@@ -202,7 +201,7 @@ public class GravityGun : MonoBehaviour
         objectRB.useGravity = true;
         objectRB.drag = 1;
 
-        objectRB.transform.parent = null;
+        //objectRB.transform.parent = null;
         heldObject = null;
     }
 
