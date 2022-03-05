@@ -11,12 +11,14 @@ public class PlayerController2 : MonoBehaviour
     private PlayerInput playerInput;
     public Transform cameraTransform;
     public GravityGun gravityGun;
+    public GameObject hand;
 
     public Vector3 playerVelocity;
     public float jumpHeight;
     public float gravityValue = -9.81f;
     public float playerSpeed;
-    public float rotationSpeed;
+    public float bodyRotationSpeed;
+    public float handRotationSpeed;
 
     private Vector2 input;
     private InputAction moveAction;
@@ -75,7 +77,8 @@ public class PlayerController2 : MonoBehaviour
 
         Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
 
-        direction = direction.x * cameraTransform.right.normalized + direction.z * cameraTransform.forward.normalized;
+        direction = direction.x * cameraTransform.right.normalized +
+                    direction.z * cameraTransform.forward.normalized;
         direction.y = 0f;
 
         controller.Move(direction * Time.deltaTime * playerSpeed);
@@ -89,7 +92,11 @@ public class PlayerController2 : MonoBehaviour
         controller.Move(playerVelocity * Time.deltaTime);
 
         //rotate
-        Quaternion targetRotation = Quaternion.Euler(0, cameraTransform.eulerAngles.y, 0);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        Quaternion bodyTargetRotation = Quaternion.Euler(0, cameraTransform.eulerAngles.y, 0);
+        transform.rotation = Quaternion.Lerp(transform.rotation, bodyTargetRotation, bodyRotationSpeed * Time.deltaTime);
+
+        Quaternion handTargetRotation = Quaternion.Euler(cameraTransform.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
+        hand.transform.rotation = Quaternion.Lerp(hand.transform.rotation, handTargetRotation, handRotationSpeed * Time.deltaTime);
+
     }
 }
