@@ -63,7 +63,6 @@ public class GravityGun : MonoBehaviour
     {
         //temporary function
         maxEnergy = maxEnergyDisplay;
-        currentEnergy = maxEnergyDisplay;
         energyFillRate = energyFillRateDisplay;
     }
 
@@ -73,6 +72,7 @@ public class GravityGun : MonoBehaviour
         CastRay();
 
         if(heldObject != null) MoveObject();
+        currentEnergyDisplay = currentEnergy;
     }
 
     public void Shoot(string type)
@@ -178,6 +178,7 @@ public class GravityGun : MonoBehaviour
     public void PickUpObject()
     {
         if (!UseEnergy(pickUpCost)) return;
+        if (lastHit.GetComponent<Rigidbody>() == null) return;
 
         Rigidbody objectRB = lastHit.GetComponent<Rigidbody>();
         objectRB.useGravity = false;
@@ -197,6 +198,8 @@ public class GravityGun : MonoBehaviour
 
     public void DropObject()
     {
+        if (heldObject.GetComponent<Rigidbody>() == null) return;
+
         Rigidbody objectRB = heldObject.GetComponent<Rigidbody>();
         objectRB.useGravity = true;
         objectRB.drag = 1;

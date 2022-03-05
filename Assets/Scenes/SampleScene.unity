@@ -1052,7 +1052,7 @@ MonoBehaviour:
   jumpHeight: 1
   gravityValue: -9.81
   playerSpeed: 10
-  bodyRotationSpeed: 10
+  bodyRotationSpeed: 15
   handRotationSpeed: 10
   turnSmoothTime: 0.1
 --- !u!114 &988970787
@@ -1478,11 +1478,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6076993087590298969, guid: b60e885ed63075746ac85fdcce631548, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.5807405
+      value: 3.5807407
       objectReference: {fileID: 0}
     - target: {fileID: 6076993087590298969, guid: b60e885ed63075746ac85fdcce631548, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.6701381
+      value: -1.6701384
       objectReference: {fileID: 0}
     - target: {fileID: 6076993087590298969, guid: b60e885ed63075746ac85fdcce631548, type: 3}
       propertyPath: m_LocalRotation.w

@@ -18,6 +18,11 @@ public class UIController : MonoBehaviour
         if (instance == null) instance = this;
     }
 
+    private void Update()
+    {
+        energyText.text = Mathf.Ceil(GravityGun.currentEnergy).ToString();
+    }
+
     public static void EnergyBarUse()
     {
         instance.energyBar.fillAmount = GravityGun.currentEnergy / GravityGun.maxEnergy;
@@ -39,8 +44,10 @@ public class UIController : MonoBehaviour
             }
             else
             {
+                GravityGun.currentEnergy += GravityGun.energyFillRate / 100;
                 yield return new WaitForSeconds(GravityGun.energyFillRate / 100);
             }
         }
+        isFilling = false;
     }
 }
