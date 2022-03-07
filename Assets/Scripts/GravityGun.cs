@@ -48,6 +48,10 @@ public class GravityGun : MonoBehaviour
     public float moveForce = 250;
     public bool isHeld = false;
 
+    [Header("Yeet object")]
+    public float yeetForce;
+    
+
     void Start()
     {
         currentTimeBetweenShots = timeBetweenShots;
@@ -55,7 +59,7 @@ public class GravityGun : MonoBehaviour
 
         cf = gameObject.GetComponent<ConstantForce>();
 
-        Physics.gravity = new Vector3(0, earthGravity, 0);
+        //Physics.gravity = new Vector3(0, earthGravity, 0);
         invertedGravity = earthGravity * (-2);
     }
 
@@ -89,6 +93,10 @@ public class GravityGun : MonoBehaviour
 
                 case "pick":
                     PickUpOrDrop();
+                    break;
+
+                case "yeet":
+                    if (heldObject != null) YeetObject();
                     break;
             }
 
@@ -182,6 +190,7 @@ public class GravityGun : MonoBehaviour
 
         Rigidbody objectRB = lastHit.GetComponent<Rigidbody>();
         objectRB.useGravity = false;
+        objectRB.freezeRotation = true;
         objectRB.drag = 10;
         //objectRB.transform.parent = holdParent;
         heldObject = lastHit;
@@ -198,14 +207,31 @@ public class GravityGun : MonoBehaviour
 
     public void DropObject()
     {
-        if (heldObject.GetComponent<Rigidbody>() == null) return;
+        //if (lastHit.GetComponent<Rigidbody>() == null) return;
 
         Rigidbody objectRB = heldObject.GetComponent<Rigidbody>();
         objectRB.useGravity = true;
+        objectRB.freezeRotation = false;
         objectRB.drag = 1;
 
         //objectRB.transform.parent = null;
         heldObject = null;
+    }
+
+    public void YeetObject()
+    {
+        Debug.Log("YEET");
+        if (heldObject.GetComponent<Rigidbody>() == null) return;
+
+        Rigidbody objectRB = heldObject.GetComponent<Rigidbody>();
+        objectRB.useGravity = true;
+        objectRB.freezeRotation = false;
+        objectRB.drag = 1;
+
+        heldObject = null;
+
+        objectRB.AddForce(transform.forward.normalized * yeetForce);
+        //objectRB.AddExplosionForce(yeetForce, transform.position, 10);
     }
 
     private void OnDrawGizmos()
