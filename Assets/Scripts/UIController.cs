@@ -23,31 +23,9 @@ public class UIController : MonoBehaviour
         energyText.text = Mathf.Ceil(GravityGun.currentEnergy).ToString();
     }
 
-    public static void EnergyBarUse()
+    public static void UpdateUI()
     {
-        instance.energyBar.fillAmount = GravityGun.currentEnergy / GravityGun.maxEnergy;
         instance.energyText.text = GravityGun.currentEnergy.ToString();
-    }
-
-    public IEnumerator EnergyBarFillIE()
-    {
-        isFilling = true;
-
-        for(float i = 0; i < 100; i++)
-        {
-            energyBar.fillAmount += 0.01f;
-            
-            if(energyBar.fillAmount == 1)
-            {
-                isFilling = false;
-                StopCoroutine(EnergyBarFillIE());
-            }
-            else
-            {
-                GravityGun.currentEnergy += GravityGun.energyFillRate / 100;
-                yield return new WaitForSeconds(GravityGun.energyFillRate / 100);
-            }
-        }
-        isFilling = false;
+        instance.energyBar.fillAmount = GravityGun.currentEnergy / GravityGun.maxEnergy;
     }
 }

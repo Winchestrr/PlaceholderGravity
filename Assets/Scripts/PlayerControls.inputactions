@@ -33,6 +33,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Sprint",
+                    "type": "PassThrough",
+                    "id": "54f7cb53-a972-4a98-b872-5051dc048f99",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Aim",
                     "type": "Button",
                     "id": "c5f0d403-e96a-4435-ad1b-06cad3f35502",
@@ -199,6 +208,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Yeet",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "677deeaa-0680-4f2b-98e8-c22ddd61ffb3",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Sprint",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

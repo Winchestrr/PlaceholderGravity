@@ -17,12 +17,20 @@ public class PlayerController2 : MonoBehaviour
     public float jumpHeight;
     public float gravityValue = -9.81f;
     public float playerSpeed;
+    public float sprintSpeed;
     public float bodyRotationSpeed;
     public float handRotationSpeed;
+
+    [Header("Jump")]
+    public bool isGrounded;
+    public float groundedOffset;
+    public float groundedRadius;
+    public LayerMask groundLayers;
 
     private Vector2 input;
     private InputAction moveAction;
     private InputAction jumpAction;
+    private InputAction sprintAction;
     private InputAction shootAction;
     private InputAction pickDropAction;
     private InputAction yeetAction;
@@ -40,6 +48,7 @@ public class PlayerController2 : MonoBehaviour
 
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
+        sprintAction = playerInput.actions["Sprint"];
         shootAction = playerInput.actions["Shoot"];
         pickDropAction = playerInput.actions["PickUpDrop"];
         yeetAction = playerInput.actions["Yeet"];
@@ -101,5 +110,18 @@ public class PlayerController2 : MonoBehaviour
         Quaternion handTargetRotation = Quaternion.Euler(cameraTransform.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
         hand.transform.rotation = Quaternion.Lerp(hand.transform.rotation, handTargetRotation, handRotationSpeed * Time.deltaTime);
 
+    }
+
+    void CheckGrounded()
+    {
+        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - groundedOffset, transform.position.z);
+        isGrounded = Physics.CheckSphere(spherePosition, groundedRadius, groundLayers, QueryTriggerInteraction.Ignore);
+    }
+
+    void NewMove()
+    {
+        float targetSpeed = sprintAction.IsPressed() ? sprintSpeed : playerSpeed;
+
+        //if (moveAction. == Vector2.zero) targetSpeed = 0.0f;
     }
 }

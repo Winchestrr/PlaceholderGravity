@@ -17,6 +17,7 @@ public class GravityGun : MonoBehaviour
 
     [Header("Energy")]
     public Image energyBar;
+    public bool isEnergyRefilling;
     public static float maxEnergy = 200;
     public float maxEnergyDisplay;
     public static float currentEnergy;
@@ -50,7 +51,7 @@ public class GravityGun : MonoBehaviour
 
     [Header("Yeet object")]
     public float yeetForce;
-    
+
 
     void Start()
     {
@@ -75,7 +76,7 @@ public class GravityGun : MonoBehaviour
         SetStatics();
         CastRay();
 
-        if(heldObject != null) MoveObject();
+        if (heldObject != null) MoveObject();
         currentEnergyDisplay = currentEnergy;
     }
 
@@ -100,21 +101,20 @@ public class GravityGun : MonoBehaviour
                     break;
             }
 
-            if (!uiController.isFilling) StartCoroutine(uiController.EnergyBarFillIE());
+            if (!isEnergyRefilling) StartCoroutine(EnergyRefill());
         }
+
+        UIController.UpdateUI();
     }
 
     public bool UseEnergy(int amount)
     {
+        UIController.UpdateUI();
+
         if (currentEnergy - amount >= 0)
         {
             Debug.Log("Energy used");
             currentEnergy -= amount;
-
-            UIController.EnergyBarUse();
-
-            //StartCoroutine(EnergyRefill());
-
             return true;
         }
         else
@@ -123,12 +123,6 @@ public class GravityGun : MonoBehaviour
             return false;
         }
     }
-
-
-    //IEnumerator EnergyRefill()
-    //{
-
-    //}
 
     void CastRay()
     {
@@ -140,7 +134,7 @@ public class GravityGun : MonoBehaviour
             lastHit = hitinfo.transform.gameObject;
             cf = lastHit.transform.gameObject.GetComponent<ConstantForce>();
 
-            if(hitinfo.transform.gameObject.GetComponent<Rigidbody>() != null)
+            if (hitinfo.transform.gameObject.GetComponent<Rigidbody>() != null)
             {
                 invertedGravity = earthGravity * (-2) * hitinfo.transform.gameObject.GetComponent<Rigidbody>().mass;
             }
@@ -166,6 +160,26 @@ public class GravityGun : MonoBehaviour
             isInverted = !isInverted;
         }
         cf = null;
+    }
+
+    public IEnumerator EnergyRefill()
+    {
+        for (int i = 0; i < 100; i++)
+        {
+            if(currentEnergy != maxEnergy)
+            {
+                isEnergyRefilling = true;
+                currentEnergy += (maxEnergy / 100);
+                UIController.UpdateUI();
+                yield return new WaitForSeconds(energyFillRate / 100);
+            }
+            else
+            {
+                UIController.UpdateUI();
+                isEnergyRefilling = false;
+                StopCoroutine(EnergyRefill());
+            }
+        }
     }
 
     public void PickUpOrDrop()
@@ -207,7 +221,7 @@ public class GravityGun : MonoBehaviour
 
     public void DropObject()
     {
-        //if (lastHit.GetComponent<Rigidbody>() == null) return;
+        if (heldObject.GetComponent<Rigidbody>() == null) return;
 
         Rigidbody objectRB = heldObject.GetComponent<Rigidbody>();
         objectRB.useGravity = true;
