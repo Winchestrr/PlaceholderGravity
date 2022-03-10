@@ -14,6 +14,9 @@ public class SwitchVCam : MonoBehaviour
     private CinemachineVirtualCamera virtualCamera;
     private InputAction aimAction;
 
+    public static bool isAimed;
+    public bool isAimedDisplay;
+
     private void Awake()
     {
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
@@ -32,8 +35,15 @@ public class SwitchVCam : MonoBehaviour
         aimAction.canceled -= _ => CancelAim();
     }
 
+    private void Update()
+    {
+        isAimedDisplay = isAimed;
+    }
+
     private void StartAim()
     {
+        isAimed = true;
+
         virtualCamera.Priority += priorityBoostAmount;
         aimCanvas.enabled = true;
         thirdPersonCanvas.enabled = false;
@@ -41,6 +51,8 @@ public class SwitchVCam : MonoBehaviour
 
     private void CancelAim()
     {
+        isAimed = false;
+
         virtualCamera.Priority -= priorityBoostAmount;
         aimCanvas.enabled = false;
         thirdPersonCanvas.enabled = true;

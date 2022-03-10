@@ -60,7 +60,6 @@ public class GravityGun : MonoBehaviour
 
         cf = gameObject.GetComponent<ConstantForce>();
 
-        //Physics.gravity = new Vector3(0, earthGravity, 0);
         invertedGravity = earthGravity * (-2);
     }
 

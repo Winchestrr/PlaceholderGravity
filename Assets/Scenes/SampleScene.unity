@@ -1728,17 +1728,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5636101ab63fc2a42849194cb0a4eb8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
+  controller: {fileID: 988970788}
   cam: {fileID: 1504789403}
   cameraTransform: {fileID: 1504789403}
   gravityGun: {fileID: 1746473249}
   hand: {fileID: 54088710}
   playerVelocity: {x: 0, y: 0, z: 0}
-  jumpHeight: 1
+  speedChangeRate: 10
   gravityValue: -9.81
   playerSpeed: 10
+  currentPlayerSpeed: 20
+  sprintSpeed: 10
   bodyRotationSpeed: 15
   handRotationSpeed: 10
+  targetRotation: 0
+  rotationSmoothTime: 0.1
+  verticalVelocity: 0
+  isGrounded: 0
+  groundedOffset: 0
+  groundedRadius: 0
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  jumpTimeout: 0
+  fallTimeout: 0
+  jumpHeight: 1
   turnSmoothTime: 0.1
 --- !u!114 &988970787
 MonoBehaviour:
@@ -2271,6 +2285,7 @@ MonoBehaviour:
   priorityBoostAmount: 10
   thirdPersonCanvas: {fileID: 1600561610}
   aimCanvas: {fileID: 1972431709}
+  isAimedDisplay: 0
 --- !u!1 &1268418279
 GameObject:
   m_ObjectHideFlags: 0
@@ -2417,11 +2432,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6076993087590298969, guid: b60e885ed63075746ac85fdcce631548, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.5807407
+      value: 3.5807405
       objectReference: {fileID: 0}
     - target: {fileID: 6076993087590298969, guid: b60e885ed63075746ac85fdcce631548, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.6701384
+      value: -1.6701381
       objectReference: {fileID: 0}
     - target: {fileID: 6076993087590298969, guid: b60e885ed63075746ac85fdcce631548, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3523,7 +3538,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfec006de384f4a418e567cb4c389224, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  newGravity: {x: 0, y: -15, z: 0}
 --- !u!4 &1621575568
 Transform:
   m_ObjectHideFlags: 0

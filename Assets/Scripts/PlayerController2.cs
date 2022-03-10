@@ -14,18 +14,33 @@ public class PlayerController2 : MonoBehaviour
     public GameObject hand;
 
     public Vector3 playerVelocity;
-    public float jumpHeight;
+    public float speedChangeRate = 10f;
     public float gravityValue = -9.81f;
     public float playerSpeed;
+    public float currentPlayerSpeed;
     public float sprintSpeed;
     public float bodyRotationSpeed;
     public float handRotationSpeed;
+
+    public float targetRotation = 0f;
+    public float rotationSmoothTime;
+    public float verticalVelocity;
+    private Vector3 targetDirection;
 
     [Header("Jump")]
     public bool isGrounded;
     public float groundedOffset;
     public float groundedRadius;
     public LayerMask groundLayers;
+    public float jumpTimeout;
+    public float fallTimeout;
+    public float jumpHeight;
+
+    private float _fallTimeoutDelta;
+    private float _jumpTimeoutDelta;
+    private float _fallVelocity;
+    private float _verticalVelocity;
+
 
     private Vector2 input;
     private InputAction moveAction;
@@ -57,22 +72,15 @@ public class PlayerController2 : MonoBehaviour
     private void OnEnable()
     {
         Cursor.visible = false;
-        //shootAction.performed += _ => gravityGun.ChangeGravity();
     }
-
-    private void OnDisable()
-    {
-        //shootAction.performed -= _ => gravityGun.ChangeGravity();
-    }
-
-
 
     void Update()
     {
         GetInputs();
-        Move();
+        NewMove();
+        HandRotation();
+        Jump();
     }
-
 
     void GetInputs()
     {
@@ -83,45 +91,78 @@ public class PlayerController2 : MonoBehaviour
         if (yeetAction.triggered) gravityGun.Shoot("yeet");
     }
 
-    void Move()
-    {
-        if(playerVelocity.y < 0) playerVelocity.y = 0;
-
-        Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
-
-        direction = direction.x * cameraTransform.right.normalized +
-                    direction.z * cameraTransform.forward.normalized;
-        direction.y = 0f;
-
-        controller.Move(direction * Time.deltaTime * playerSpeed);
-
-        if(jumpAction.triggered)
-        {
-            Debug.Log("jump");
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
-        }
-        playerVelocity.y += gravityValue * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
-
-        //rotate
-        Quaternion bodyTargetRotation = Quaternion.Euler(0, cameraTransform.eulerAngles.y, 0);
-        transform.rotation = Quaternion.Lerp(transform.rotation, bodyTargetRotation, bodyRotationSpeed * Time.deltaTime);
-
-        Quaternion handTargetRotation = Quaternion.Euler(cameraTransform.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
-        hand.transform.rotation = Quaternion.Lerp(hand.transform.rotation, handTargetRotation, handRotationSpeed * Time.deltaTime);
-
-    }
-
     void CheckGrounded()
     {
         Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - groundedOffset, transform.position.z);
         isGrounded = Physics.CheckSphere(spherePosition, groundedRadius, groundLayers, QueryTriggerInteraction.Ignore);
     }
 
+    void Jump()
+    {
+        if (isGrounded)
+        {
+            _fallTimeoutDelta = fallTimeout;
+
+            if (_verticalVelocity < 0f)
+                _verticalVelocity = -2f;
+
+            if (jumpAction.triggered && _jumpTimeoutDelta <= 0f)
+                _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * GameSystem.newGravity.y);
+
+            if (_jumpTimeoutDelta >= 0f)
+                _jumpTimeoutDelta -= Time.deltaTime;
+        }
+        else
+        {
+            _jumpTimeoutDelta = jumpTimeout;
+
+            if (_fallTimeoutDelta >= 0f)
+                _fallTimeoutDelta -= Time.deltaTime;
+        }
+    }
+
     void NewMove()
     {
         float targetSpeed = sprintAction.IsPressed() ? sprintSpeed : playerSpeed;
 
-        //if (moveAction. == Vector2.zero) targetSpeed = 0.0f;
+        if (moveAction.ReadValue<Vector2>() == Vector2.zero) targetSpeed = 0.0f;
+
+        float currentHorizontalSpeed = new Vector3(controller.velocity.x, 0.0f, controller.velocity.z).magnitude;
+        float speedOffset = 0.1f;
+        float inputMagnitude = 1f;
+
+        if (currentHorizontalSpeed < targetSpeed - speedOffset ||
+           currentHorizontalSpeed > targetSpeed + speedOffset)
+        {
+            currentPlayerSpeed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * speedChangeRate);
+            currentPlayerSpeed = Mathf.Round(currentPlayerSpeed * 1000f) / 1000f;
+        }
+        else currentPlayerSpeed = targetSpeed;
+
+        Vector3 inputDirection = new Vector3(moveAction.ReadValue<Vector2>().x,
+                                             0f,
+                                             moveAction.ReadValue<Vector2>().y);
+
+        if (moveAction.ReadValue<Vector2>() != Vector2.zero)
+        {
+            targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + cam.transform.eulerAngles.y;
+            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref bodyRotationSpeed, rotationSmoothTime);
+            transform.rotation = Quaternion.Euler(0f, rotation, 0f);
+        }
+   
+        targetDirection = Quaternion.Euler(0f, targetRotation, 0f) * Vector3.forward;
+
+        controller.Move(targetDirection.normalized * (currentPlayerSpeed * Time.deltaTime) +
+                        new Vector3(0f, verticalVelocity, 0f) * Time.deltaTime);
+    }
+
+    //rotate while aimed
+    //Quaternion bodyTargetRotation = Quaternion.Euler(0, cameraTransform.eulerAngles.y, 0);
+    //transform.rotation = Quaternion.Lerp(transform.rotation, bodyTargetRotation, bodyRotationSpeed * Time.deltaTime);
+
+    void HandRotation()
+    {
+        Quaternion handTargetRotation = Quaternion.Euler(cameraTransform.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
+        hand.transform.rotation = Quaternion.Lerp(hand.transform.rotation, handTargetRotation, handRotationSpeed * Time.deltaTime);
     }
 }
