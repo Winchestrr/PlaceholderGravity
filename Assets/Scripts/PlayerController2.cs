@@ -143,14 +143,32 @@ public class PlayerController2 : MonoBehaviour
                                              0f,
                                              moveAction.ReadValue<Vector2>().y);
 
-        if (moveAction.ReadValue<Vector2>() != Vector2.zero)
+        if(SwitchVCam.isAimed)
         {
-            targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + cam.transform.eulerAngles.y;
-            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref bodyRotationSpeed, rotationSmoothTime);
-            transform.rotation = Quaternion.Euler(0f, rotation, 0f);
+            //make change here to not turn around when aiming
+
+            if (moveAction.ReadValue<Vector2>() != Vector2.zero)
+            {
+                targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + cam.transform.eulerAngles.y;
+                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref bodyRotationSpeed, rotationSmoothTime);
+                transform.rotation = Quaternion.Euler(0f, rotation, 0f);
+            }
+
+            targetDirection = Quaternion.Euler(0f, targetRotation, 0f) * Vector3.forward;
         }
-   
-        targetDirection = Quaternion.Euler(0f, targetRotation, 0f) * Vector3.forward;
+        else
+        {
+            if (moveAction.ReadValue<Vector2>() != Vector2.zero)
+            {
+                targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + cam.transform.eulerAngles.y;
+                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref bodyRotationSpeed, rotationSmoothTime);
+                transform.rotation = Quaternion.Euler(0f, rotation, 0f);
+            }
+
+            targetDirection = Quaternion.Euler(0f, targetRotation, 0f) * Vector3.forward;
+        }
+
+        
 
         controller.Move(targetDirection.normalized * (currentPlayerSpeed * Time.deltaTime) +
                         new Vector3(0f, verticalVelocity, 0f) * Time.deltaTime);
