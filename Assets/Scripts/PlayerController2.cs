@@ -79,13 +79,12 @@ public class PlayerController2 : MonoBehaviour
         GetInputs();
         NewMove();
         HandRotation();
-        Jump();
     }
 
     void GetInputs()
     {
         input = moveAction.ReadValue<Vector2>();
-        if (jumpAction.triggered) Cursor.visible = true;
+        if (jumpAction.triggered) Jump();
         if (shootAction.triggered) gravityGun.Shoot("change");
         if (pickDropAction.triggered) gravityGun.Shoot("pick");
         if (yeetAction.triggered) gravityGun.Shoot("yeet");
@@ -99,14 +98,13 @@ public class PlayerController2 : MonoBehaviour
 
     void Jump()
     {
-        if (isGrounded)
+        if (isGrounded && _jumpTimeoutDelta <= 0f)
         {
             _fallTimeoutDelta = fallTimeout;
 
             if (_verticalVelocity < 0f)
                 _verticalVelocity = -2f;
 
-            if (jumpAction.triggered && _jumpTimeoutDelta <= 0f)
                 _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * GameSystem.newGravity.y);
 
             if (_jumpTimeoutDelta >= 0f)
