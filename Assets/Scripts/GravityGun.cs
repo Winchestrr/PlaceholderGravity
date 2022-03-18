@@ -52,6 +52,9 @@ public class GravityGun : MonoBehaviour
     [Header("Yeet object")]
     public float yeetForce;
 
+    [Header("Energy drain")]
+    public float drainSpeed;
+
 
     void Start()
     {
@@ -142,6 +145,14 @@ public class GravityGun : MonoBehaviour
         }
     }
 
+    public void Interact()
+    {
+        if(lastHit.GetComponentInParent<InteractableObject>() != null)
+        {
+            lastHit.GetComponentInParent<InteractableObject>().Interact();
+        }
+    }
+
     public void ChangeGravity()
     {
         //invertedGravity = earthGravity * (-2) * ;
@@ -180,6 +191,16 @@ public class GravityGun : MonoBehaviour
                 isEnergyRefilling = false;
                 StopCoroutine(EnergyRefill());
             }
+        }
+    }
+
+    public IEnumerator DrainEnergyIE()
+    {
+        Rigidbody objectRB = lastHit.gameObject.GetComponent<Rigidbody>();
+        for(int i = 0; i < 100; i++)
+        {
+            objectRB.mass -= objectRB.mass / 100;
+            yield return new WaitForSeconds(drainSpeed / 100);
         }
     }
 
