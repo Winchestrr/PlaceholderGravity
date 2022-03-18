@@ -59,6 +59,9 @@ public class PlayerController2 : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
+        cam = GameObject.Find("Camera").transform;
+        cameraTransform = GameObject.Find("Camera").transform;
+        playerInput.camera = GameObject.Find("Camera").GetComponent<Camera>();
         //cameraTransform = Camera.main.transform;
 
         moveAction = playerInput.actions["Move"];

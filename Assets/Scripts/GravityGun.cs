@@ -59,6 +59,8 @@ public class GravityGun : MonoBehaviour
         currentEnergy = maxEnergy;
 
         cf = gameObject.GetComponent<ConstantForce>();
+        uiController = GameObject.Find("Canvas").GetComponent<UIController>();
+        energyBar = GameObject.Find("EnergyFill").GetComponent<Image>();
 
         invertedGravity = earthGravity * (-2);
     }
@@ -241,6 +243,7 @@ public class GravityGun : MonoBehaviour
         objectRB.freezeRotation = false;
         objectRB.drag = 1;
 
+        isHeld = false;
         heldObject = null;
 
         objectRB.AddForce(transform.forward.normalized * yeetForce);
