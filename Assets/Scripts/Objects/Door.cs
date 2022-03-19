@@ -14,12 +14,14 @@ public class Door : MonoBehaviour
 
     public void OpenDoor()
     {
+        if (isOpened) return;
         isOpened = true;
         _animator.SetBool("Opened", isOpened);
     }
 
     public void CloseDoor()
     {
+        if (!isOpened) return;
         isOpened = false;
         _animator.SetBool("Opened", isOpened);
     }
