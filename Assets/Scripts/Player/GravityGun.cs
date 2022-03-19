@@ -34,6 +34,8 @@ public class GravityGun : MonoBehaviour
     public RaycastHit hitinfo;
     public Vector3 collision = Vector3.zero;
 
+    public bool debugDrawRaycast;
+
     [Header("Gravity")]
     public int changeGravityCost;
     public float earthGravity = -9.8f;
@@ -130,8 +132,11 @@ public class GravityGun : MonoBehaviour
 
     void CastRay()
     {
-        //Debug.DrawRay(gunEnd.transform.position, transform.TransformDirection(Vector3.forward) * distance, Color.red);
-        //if (Physics.Raycast(gunEnd.transform.position, transform.TransformDirection(Vector3.forward), out hitinfo, distance))
+        if(debugDrawRaycast)
+        {
+            Debug.DrawRay(gunEnd.transform.position, transform.TransformDirection(Vector3.forward) * distance, Color.red);
+        }
+
         if (Physics.Raycast(playerController.cameraTransform.position, playerController.cameraTransform.forward, out hitinfo, distance))
         {
             collision = hitinfo.point;
@@ -147,16 +152,14 @@ public class GravityGun : MonoBehaviour
 
     public void Interact()
     {
-        if(lastHit.GetComponentInParent<InteractableObject>() != null)
+        if(lastHit != null)
         {
-            lastHit.GetComponentInParent<InteractableObject>().Interact();
+            lastHit.SendMessageUpwards("Interact", SendMessageOptions.DontRequireReceiver);
         }
     }
 
     public void ChangeGravity()
     {
-        //invertedGravity = earthGravity * (-2) * ;
-
         if (!UseEnergy(changeGravityCost)) return;
 
         if (cf != null)
