@@ -165,13 +165,10 @@ public class GravityGun : MonoBehaviour
         if (cf != null)
         {
             if (!isInverted)
-            {
                 cf.force = new Vector3(0, invertedGravity, 0);
-            }
             else
-            {
                 cf.force = new Vector3(0, 0, 0);
-            }
+
             isInverted = !isInverted;
         }
         cf = null;
@@ -246,6 +243,7 @@ public class GravityGun : MonoBehaviour
 
     public void DropObject()
     {
+        if (heldObject == null) return;
         if (heldObject.GetComponent<Rigidbody>() == null) return;
 
         Rigidbody objectRB = heldObject.GetComponent<Rigidbody>();
