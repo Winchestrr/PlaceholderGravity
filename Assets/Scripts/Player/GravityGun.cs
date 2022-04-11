@@ -24,6 +24,7 @@ public class GravityGun : MonoBehaviour
     public float currentEnergyDisplay;
     public static float energyFillRate;
     public float energyFillRateDisplay;
+    private bool energyFillBlock;
 
     [Header("Raycast")]
     public GameObject gunEnd;
@@ -81,6 +82,7 @@ public class GravityGun : MonoBehaviour
     {
         SetStatics();
         CastRay();
+        EnergyRefill();
 
         if (heldObject != null) MoveObject();
         currentEnergyDisplay = currentEnergy;
@@ -107,7 +109,7 @@ public class GravityGun : MonoBehaviour
                     break;
             }
 
-            if (!isEnergyRefilling) StartCoroutine(EnergyRefill());
+            //if (!isEnergyRefilling) StartCoroutine(EnergyRefill());
         }
 
         UIController.UpdateUI();
@@ -174,8 +176,23 @@ public class GravityGun : MonoBehaviour
         cf = null;
     }
 
-    public IEnumerator EnergyRefill()
+    public void EnergyRefill()
     {
+        if (energyFillBlock)
+        {
+            return;
+        }
+
+        if (currentEnergy == maxEnergy)
+        {
+            return;
+        }
+
+        currentEnergy = Mathf.Clamp(currentEnergy + energyFillRate * Time.deltaTime, 0f, maxEnergy);
+        UIController.UpdateUI();
+        //isEnergyRefilling = true; //?
+
+        /*
         for (int i = 0; i < 100; i++)
         {
             if(currentEnergy != maxEnergy)
@@ -192,6 +209,7 @@ public class GravityGun : MonoBehaviour
                 StopCoroutine(EnergyRefill());
             }
         }
+        */
     }
 
     public IEnumerator DrainEnergyIE()
