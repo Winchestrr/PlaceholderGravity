@@ -55,7 +55,10 @@ public class GravityGun : MonoBehaviour
     public float yeetForce;
 
     [Header("Energy drain")]
+    public float drainAmount;
     public float drainSpeed;
+
+    private GravityObject gravityObject;
 
 
     void Start()
@@ -91,6 +94,7 @@ public class GravityGun : MonoBehaviour
         if (Time.time > lastShotTime + currentTimeBetweenShots)
         {
             lastShotTime = Time.time;
+            gravityObject = lastHit.GetComponent<GravityObject>();
 
             switch (type)
             {
@@ -145,7 +149,8 @@ public class GravityGun : MonoBehaviour
 
             if (hitinfo.transform.gameObject.GetComponent<Rigidbody>() != null)
             {
-                invertedGravity = earthGravity * (-2) * hitinfo.transform.gameObject.GetComponent<Rigidbody>().mass;
+                //invertedGravity = earthGravity * (-2) * hitinfo.transform.gameObject.GetComponent<Rigidbody>().mass;
+                invertedGravity = GameSystem.newGravity.y * (-1) * hitinfo.transform.gameObject.GetComponent<Rigidbody>().mass;
             }
         }
     }
@@ -196,10 +201,9 @@ public class GravityGun : MonoBehaviour
 
     public IEnumerator DrainEnergyIE()
     {
-        Rigidbody objectRB = lastHit.gameObject.GetComponent<Rigidbody>();
         for(int i = 0; i < 100; i++)
         {
-            objectRB.mass -= objectRB.mass / 100;
+            gravityObject.DrainGravity(drainAmount / 100);
             yield return new WaitForSeconds(drainSpeed / 100);
         }
     }

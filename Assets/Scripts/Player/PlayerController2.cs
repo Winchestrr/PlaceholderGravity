@@ -50,6 +50,7 @@ public class PlayerController2 : MonoBehaviour
     private InputAction pickDropAction;
     private InputAction yeetAction;
     private InputAction interactAction;
+    private InputAction drainAction;
 
     //https://www.youtube.com/watch?v=SeBEvM2zMpY 39:10
 
@@ -72,6 +73,7 @@ public class PlayerController2 : MonoBehaviour
         pickDropAction = playerInput.actions["PickUpDrop"];
         yeetAction = playerInput.actions["Yeet"];
         interactAction = playerInput.actions["Interact"];
+        drainAction = playerInput.actions["Drain"];
     }
 
     private void OnEnable()
@@ -94,6 +96,8 @@ public class PlayerController2 : MonoBehaviour
         if (pickDropAction.triggered) gravityGun.Shoot("pick");
         if (yeetAction.triggered) gravityGun.Shoot("yeet");
         if (interactAction.triggered) gravityGun.Interact();
+        
+        //if (drainAction.)
     }
 
     void CheckGrounded()
